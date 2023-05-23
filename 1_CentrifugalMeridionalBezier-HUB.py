@@ -21,51 +21,68 @@ class Meridional:
 		R2 = obj.D2/2.
 		r0 = obj.d0/2.
 		R0 = obj.D0/2.
+		th  = 1
 
 		# Create points:
-		shroudP1 = FreeCAD.Vector(0, R0,0)
-		shroudP2 = FreeCAD.Vector(obj.L,R0,0)
-		shroudP3 = FreeCAD.Vector(obj.L,(R2+R0)/2.,0)
-		shroudP4 = FreeCAD.Vector(obj.L,R2,0)
+		hub2P1 = FreeCAD.Vector(0, r0-th,0)
+		hub2P2 = FreeCAD.Vector(obj.L+obj.b2+th,r0-th,0)
+		hub2P3 = FreeCAD.Vector(obj.L+obj.b2+th,(R2+R0)/2-th,0)
+		hub2P4 = FreeCAD.Vector(obj.L+obj.b2+th, R2,0)
+
+		hub2P = [hub2P1, hub2P2, hub2P3, hub2P4]
+
+		hub2 = Part.BezierCurve()
+		hub2.setPoles(hub2P)
+		hub2.toShape()
+		hub2Discret = hub2.discretize(Number = 100)
+
+
+#		shroudP1 = FreeCAD.Vector(0, R0,0)
+#		shroudP2 = FreeCAD.Vector(obj.L,R0,0)
+#		shroudP3 = FreeCAD.Vector(obj.L,(R2+R0)/2.,0)
+#		shroudP4 = FreeCAD.Vector(obj.L,R2,0)
 		
 		hubP1 = FreeCAD.Vector(0,r0,0)
 		hubP2 = FreeCAD.Vector(obj.L+obj.b2,r0,0)
 		hubP3 = FreeCAD.Vector(obj.L+obj.b2,(R2+R0)/2,0)
 		hubP4 = FreeCAD.Vector(obj.L+obj.b2, R2,0)
 
-		aveCurveP1 = FreeCAD.Vector(0, (R0+r0)/2., 0)
-		aveCurveP2 = FreeCAD.Vector((obj.L+obj.b2+obj.L)/2.,(R0+r0)/2., 0)
-		aveCurveP3 = FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., (R2+R0)/2., 0)
-		aveCurveP4 = FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., R2, 0)
+#		aveCurveP1 = FreeCAD.Vector(0, (R0+r0)/2., 0)
+#		aveCurveP2 = FreeCAD.Vector((obj.L+obj.b2+obj.L)/2.,(R0+r0)/2., 0)
+#		aveCurveP3 = FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., (R2+R0)/2., 0)
+#		aveCurveP4 = FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., R2, 0)
 
 
-		shroudP = [shroudP1, shroudP2, shroudP3, shroudP4]
+#		shroudP = [shroudP1, shroudP2, shroudP3, shroudP4]
 		hubP = [hubP1, hubP2, hubP3, hubP4]
-		aveCurveP = [aveCurveP1, aveCurveP2, aveCurveP3, aveCurveP4]
-		
-		shroud = Part.BezierCurve()
-		shroud.setPoles(shroudP)
-		shroud.toShape()
-		shroudDiscret = shroud.discretize(Number = 100)
+#		aveCurveP = [aveCurveP1, aveCurveP2, aveCurveP3, aveCurveP4]
 
-#		hub = Part.BezierCurve()
-#		hub.setPoles(hubP)
-#		hub.toShape()
-#		hubDiscret = hub.discretize(Number = 100)			
+		
+#		shroud = Part.BezierCurve()
+#		shroud.setPoles(shroudP)
+#		shroud.toShape()
+#		shroudDiscret = shroud.discretize(Number = 100)
+
+		hub = Part.BezierCurve()
+		hub.setPoles(hubP)
+		hub.toShape()
+		hubDiscret = hub.discretize(Number = 100)			
 
 #		aveCurve = Part.BezierCurve()
 #		aveCurve.setPoles(aveCurveP)
 #		aveCurve.toShape()
 #		aveCurveDiscret = aveCurve.discretize(Number = 100)
 
-		inlet1 = Part.LineSegment(shroudP1,FreeCAD.Vector(0, (R0+r0)/2., 0)).toShape()
-		inlet2 = Part.LineSegment(FreeCAD.Vector(0, (R0+r0)/2., 0),hubP1).toShape()
-		outlet1 = Part.LineSegment(shroudP4,FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., R2, 0)).toShape()
-		outlet2 = Part.LineSegment(FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., R2, 0), hubP4).toShape()
+#		inlet1 = Part.LineSegment(shroudP1,FreeCAD.Vector(0, (R0+r0)/2., 0)).toShape()
+#		inlet2 = Part.LineSegment(FreeCAD.Vector(0, (R0+r0)/2., 0),hubP1).toShape()
+#		outlet1 = Part.LineSegment(shroudP4,FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., R2, 0)).toShape()
+#		outlet2 = Part.LineSegment(FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., R2, 0), hubP4).toShape()
+		connector1 = Part.LineSegment(hubP4, hub2P4).toShape()
+		connector2 = Part.LineSegment(hub2P1, hubP1).toShape()
 
 		# Creation of the separating meridional plane
-		shroud1Discret = shroudDiscret[0:(obj.LePositionShroud+1)]
-		shroud2Discret = shroudDiscret[obj.LePositionShroud:101]
+#		shroud1Discret = shroudDiscret[0:(obj.LePositionShroud+1)]
+#		shroud2Discret = shroudDiscret[obj.LePositionShroud:101]
 
 #		hub1Discret = hubDiscret[0:(obj.LePositionHub+1)]
 #		hub2Discret = hubDiscret[obj.LePositionHub:101]
@@ -85,11 +102,11 @@ class Meridional:
 #		Le2CurveDiscret = LeCurveDiscret[50:101]
 
 		# Creation a Wire of the Meridional plane of a blades
-		shroud1 = Part.BSplineCurve()
-		shroud1.interpolate(shroud1Discret)
+#		shroud1 = Part.BSplineCurve()
+#		shroud1.interpolate(shroud1Discret)
 
-		shroud2 = Part.BSplineCurve()
-		shroud2.interpolate(shroud2Discret)
+#		shroud2 = Part.BSplineCurve()
+#		shroud2.interpolate(shroud2Discret)
 
 #		hub1 = Part.BSplineCurve()
 #		hub1.interpolate(hub1Discret)
@@ -115,15 +132,15 @@ class Meridional:
 #		else:
 #			w = Part.Wire([inlet1,inlet2, shroud1.toShape(), shroud2.toShape(), outlet1, outlet2, hub1.toShape(), hub2.toShape(), Le1Curve.toShape(), Le2Curve.toShape()], closed = False)
 
-
+		w = Part.Wire([hub.toShape(), connector1, hub2.toShape(), connector2], closed = False)
 		
 
-		shroudSurface = shroud.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
-#		hubSurface = hub.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
+#		shroudSurface = shroud.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
+		hubSurface = hub.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
 
 
 #		obj.Shape = Part.Compound([w, shroudSurface, hubSurface])
-		obj.Shape = Part.Compound([shroudSurface])
+		obj.Shape = Part.Compound([w])
 
 
 import FreeCAD
