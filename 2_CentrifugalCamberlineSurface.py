@@ -90,7 +90,7 @@ class ModelOfBlade3D:
 
 			dTheta = []
 			for i in range (0,(N-1),1):
-				dTheta.append(ds[i]*BfuncListSr[i]*180./np.pi)
+				dTheta.append((ds_y[i+1] - ds_y[i])*BfuncListSr[i]*180./np.pi)
 
 			dThetaSum = [dTheta[0]]
 			for i in range (0,(N-2),1):
