@@ -49,10 +49,13 @@ class ModelOfBlade3D:
 			betaCurve.interpolate(betaPoints)
 			betaCurveDiscret = []
 			for i in range (1, (N+1), 1):
-				vector_line1 = FreeCAD.Vector(float(i)/(float(N)/100.), -180, 0)
-				vector_line2 = FreeCAD.Vector(float(i)/(float(N)/100.), 180, 0)
+				vector_line1 = FreeCAD.Vector(float(i)/(float(N)/100.), 180, 0)
+				vector_line2 = FreeCAD.Vector(float(i)/(float(N)/100.), -180, 0)
 				line = Part.LineSegment(vector_line1, vector_line2)
+				# print("v1: x, y: ", float(i)/(float(N)/100.), " 180")
+				# print("v2: x, y: ", float(i)/(float(N)/100.), " -180")
 				betaIntersect = betaCurve.intersectCC(line)
+				# print("betaIntersect: ", betaIntersect)
 				betaCurveDiscret.append(betaIntersect)
 
 			# Calculation of the Theta angle streamline
@@ -61,20 +64,26 @@ class ModelOfBlade3D:
 			for i in range (0,N,1):
 				vector_i = DiscretEdgeOfMeridional[i]
 				ri.append(vector_i.y) 
+				# print(vector_i.x, ", ", vector_i.y, ", ", vector_i.z)
 
 			betai = []
 			for i in range (0,N,1):
 				vector_betai = betaCurveDiscret[i][0]
 				betai.append(vector_betai.Y)
+				# print("vector_betai. y : " , vector_betai, ", ", vector_betai.Y)
+				# print("vector_betai.Y: " , vector_betai.Y)
 
+			print("MERIDIAN")
 			BfuncList = []
 			for i in range (0,N,1):
 				BfuncList.append(1./(ri[i]*np.tan(betai[i]*np.pi/180.)))
+				# print("BruncListItem: ", ri[i], ", ", 1./(ri[i]*np.tan(betai[i]*np.pi/180.)))
 
 			BfuncListSr = []
 			for i in range (0, (N-1), 1):
 				funcX = (BfuncList[i]+BfuncList[i+1])/2.
 				BfuncListSr.append(funcX)
+				# print("BfuncListSt: ", funcX)
 
 
 			ds_x = []
@@ -91,10 +100,17 @@ class ModelOfBlade3D:
 			dTheta = []
 			for i in range (0,(N-1),1):
 				dTheta.append((ds_y[i+1] - ds_y[i])*BfuncListSr[i]*180./np.pi)
+				# dTheta.append((ds[i])*BfuncListSr[i]*180./np.pi)
+				# print("Theta: " , ds[i]*BfuncListSr[i]*180./np.pi)
+				# print("dsi = ", (ds_y[i+1] - ds_y[i]), ", BfuncListStr = ", BfuncListSr[i] * 180.0/np.pi)
 
 			dThetaSum = [dTheta[0]]
+			dttt = 0
 			for i in range (0,(N-2),1):
 				dThetaSum.append(dThetaSum[i]+dTheta[i+1])
+				dttt = dThetaSum[i]  
+			
+			print("dThetaSum: " , dttt)
 
 			# Coordinates is XYZ of the streamline	
 			coord_x = ds_x
@@ -115,6 +131,7 @@ class ModelOfBlade3D:
 
 			streamline = Part.BSplineCurve()
 			streamline.interpolate(list_of_vectors)
+			# return betaCurve, betai, dThetaSum
 			return streamline.toShape(), betai, dThetaSum
 ######################################THE END OF THIS FUNCTION ##########################################################
 
@@ -158,6 +175,7 @@ class ModelOfBlade3D:
 			streamlineAveBad = Part.BSplineCurve()
 			streamlineAveBad.interpolate(streamlineAverageDisc)	
 
+			print("AVERAgE")
 			chartAve = chartBetaTheta(betaiAve, dThetaAveSum, obj.AnglesChartAverage)
 			
 			#pointMatrix1 = [streamlineHubDisc, streamlineAverageDisc, streamlineShroudDisc]
@@ -176,6 +194,7 @@ class ModelOfBlade3D:
 
 ##########################################################################################################
 	
+		# obj.Shape = streamlineShroudBad.toShape();
 		obj.Shape = c
 	
 

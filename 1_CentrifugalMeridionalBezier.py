@@ -123,6 +123,7 @@ class Meridional:
 
 		obj.Shape = Part.Compound([w, shroudSurface, hubSurface])
 
+import FreeCAD
 
 myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython","Meridional") 
 Meridional(myObj)
