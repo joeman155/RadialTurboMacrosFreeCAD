@@ -27,7 +27,9 @@ class Blades:
 
 		obj.addProperty("App::PropertyBool", "FullDomainCFD", "CFD", "Create full CFD Domain").FullDomainCFD = False
 		obj.addProperty("App::PropertyBool", "PeriodicDomainCFD", "CFD", "Create periodic CFD Domain").PeriodicDomainCFD = False
-		obj.addProperty("App::PropertyFloat", "HalfD3toD2", "CFD", "Value of half relationship D3/D2").HalfD3toD2 = 1.2
+		# obj.addProperty("App::PropertyFloat", "HalfD3toD2", "CFD", "Value of half relationship D3/D2").HalfD3toD2 = 1.2
+		obj.addProperty("App::PropertyFloat", "D3", "CFD", "Value of half relationship D3").D3 = 100
+
 
 
 	def execute (self, obj):
@@ -396,13 +398,16 @@ class Blades:
 			EdgeInlet = Part.LineSegment(FreeCAD.Vector(0,r0,0), FreeCAD.Vector(0,R0, 0))
 			FaceInlet = EdgeInlet.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
 
-			EdgeShroud2 = Part.LineSegment(FreeCAD.Vector(Mer.L, R2, 0), FreeCAD.Vector(Mer.L, R2*obj.HalfD3toD2, 0))
+			# EdgeShroud2 = Part.LineSegment(FreeCAD.Vector(Mer.L, R2, 0), FreeCAD.Vector(Mer.L, R2*obj.HalfD3toD2, 0))
+			EdgeShroud2 = Part.LineSegment(FreeCAD.Vector(Mer.L, R2, 0), FreeCAD.Vector(Mer.L, obj.D3/2, 0))
 			FaceShroud2 = EdgeShroud2.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
 
-			EdgeHub2 = Part.LineSegment(FreeCAD.Vector(Mer.L+Mer.b2, R2, 0), FreeCAD.Vector(Mer.L+Mer.b2, R2*obj.HalfD3toD2, 0))
+			# EdgeHub2 = Part.LineSegment(FreeCAD.Vector(Mer.L+Mer.b2, R2, 0), FreeCAD.Vector(Mer.L+Mer.b2, R2*obj.HalfD3toD2, 0))
+			EdgeHub2 = Part.LineSegment(FreeCAD.Vector(Mer.L+Mer.b2, R2, 0), FreeCAD.Vector(Mer.L+Mer.b2, obj.D3/2, 0))
 			FaceHub2 = EdgeHub2.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
 
-			EdgeOutlet = Part.LineSegment(FreeCAD.Vector(Mer.L, R2*obj.HalfD3toD2, 0), FreeCAD.Vector(Mer.L+Mer.b2, R2*obj.HalfD3toD2, 0))
+			# EdgeOutlet = Part.LineSegment(FreeCAD.Vector(Mer.L, R2*obj.HalfD3toD2, 0), FreeCAD.Vector(Mer.L+Mer.b2, R2*obj.HalfD3toD2, 0))
+			EdgeOutlet = Part.LineSegment(FreeCAD.Vector(Mer.L, obj.D3/2, 0), FreeCAD.Vector(Mer.L+Mer.b2, obj.D3/2, 0))
 			FaceOutlet = EdgeOutlet.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
 
 			CFDDomainShell = Part.makeShell([FaceInlet, FaceShroudCut, FaceShroud2, FaceOutlet, FaceHub2, FaceHubCut])
@@ -440,7 +445,8 @@ class Blades:
 			VectorFirstOut = VertexFirstOut.Point
 			VectorFirstZero = FreeCAD.Vector(Mer.L,0,0)
 			LineFirstOut = Part.LineSegment(VectorFirstZero, VectorFirstOut).toShape()
-			VectorFirstOutAdd = LineFirstOut.valueAt(LineFirstOut.Length*obj.HalfD3toD2)
+			# VectorFirstOutAdd = LineFirstOut.valueAt(LineFirstOut.Length*obj.HalfD3toD2)
+			VectorFirstOutAdd = LineFirstOut.valueAt(LineFirstOut.Length*(obj.D3 / D2))
 			LineFirstOutAdd = Part.LineSegment(VectorFirstOut, VectorFirstOutAdd).toShape()
 
 			EdgeSecondOut = CFDSolid1.Edges[4]
@@ -448,7 +454,8 @@ class Blades:
 			VectorSecondOut = VertexSecondOut.Point
 			VectorSecondZero = FreeCAD.Vector(Mer.L+Mer.b2, 0, 0)
 			LineSecondOut = Part.LineSegment(VectorSecondZero, VectorSecondOut).toShape()
-			VectorSecondOutAdd = LineSecondOut.valueAt(LineSecondOut.Length*obj.HalfD3toD2)
+			# VectorSecondOutAdd = LineSecondOut.valueAt(LineSecondOut.Length*obj.HalfD3toD2)
+			VectorSecondOutAdd = LineSecondOut.valueAt(LineSecondOut.Length*(obj.D3 / D2))
 			LineSecondOutAdd = Part.LineSegment(VectorSecondOut, VectorSecondOutAdd).toShape()
 
 			LineOutlet = Part.LineSegment(VectorFirstOutAdd, VectorSecondOutAdd).toShape()
