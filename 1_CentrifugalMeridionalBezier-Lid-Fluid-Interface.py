@@ -24,8 +24,10 @@ class Meridional:
 		R0 = obj.D0/2.
 		gap = 0.6        # The gap between the shroud of the impeller and the lid, this is filled in with the fluid we are creating here.
 		th  = 1             # The thickness of the shroud
-		relip = R3-R2   # How far the fluid extends past impeller, BEFORE it expands to the 
-		re  = 32          # How much further out the fluid extends
+		relip = 0.315  # How far the fluid extends past impeller, BEFORE it expands to the 
+		re  = 0.815         # How much further out the fluid extends
+		v    = 0.5         # How far to come back from edge
+		d    = 1           # Depth of flud 
           
 
 
@@ -82,8 +84,12 @@ class Meridional:
 		inlet2 = Part.LineSegment(FreeCAD.Vector(0, (R0+r0)/2., 0),hubP1).toShape()
 		outlet1 = Part.LineSegment(shroudP4,FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., R2, 0)).toShape()
 		outlet2 = Part.LineSegment(FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., R2, 0), hubP4).toShape()
-		connector1 = Part.LineSegment(shroudP4, shroud2P4).toShape()
-		connector2 = Part.LineSegment(shroud2P1, shroudP1).toShape()
+		connector21 = Part.LineSegment(shroud2P4, FreeCAD.Vector(obj.L-th-gap,R2+re,0)).toShape()
+		connector22 = Part.LineSegment(FreeCAD.Vector(obj.L-th-gap,R2+re,0), FreeCAD.Vector(obj.L-th-gap+gap,R2+re,0)).toShape()
+		connector23 = Part.LineSegment(FreeCAD.Vector(obj.L-th-gap+gap,R2+re,0), FreeCAD.Vector(obj.L-th-gap+gap+d,R2+re-v,0)).toShape()
+		connector24 = Part.LineSegment(FreeCAD.Vector(obj.L-th-gap+gap+d,R2+re-v,0), FreeCAD.Vector(obj.L-th-gap+gap+d,R2+re-v-relip,0)).toShape()
+		connector25 = Part.LineSegment(FreeCAD.Vector(obj.L-th-gap+gap+d,R2+re-v-0.315,0), shroudP4).toShape()
+		connector10 = Part.LineSegment(shroudP1, shroud2P1).toShape()
 
 
 		# Creation of the separating meridional plane
@@ -138,7 +144,8 @@ class Meridional:
 #		else:
 #			w = Part.Wire([inlet1,inlet2, shroud1.toShape(), shroud2.toShape(), outlet1, outlet2, hub1.toShape(), hub2.toShape(), Le1Curve.toShape(), Le2Curve.toShape()], closed = False)
 
-		w = Part.Wire([shroud.toShape(), connector1, shroud2.toShape(), connector2], closed = False)
+		# w = Part.Wire([shroud.toShape(), connector10, shroud2.toShape(), connector21, connector22], closed = False)
+		w = Part.Wire([connector10, shroud2.toShape(), connector21 , connector22, connector23, connector24, connector25, shroud.toShape(),], closed = False)
 		
 
 #		shroudSurface = shroud.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
