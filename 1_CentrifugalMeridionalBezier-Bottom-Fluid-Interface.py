@@ -84,12 +84,15 @@ class Meridional:
 		inlet2 = Part.LineSegment(FreeCAD.Vector(0, (R0+r0)/2., 0),hubP1).toShape()
 		outlet1 = Part.LineSegment(shroudP4,FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., R2, 0)).toShape()
 		outlet2 = Part.LineSegment(FreeCAD.Vector((obj.L+obj.b2+obj.L)/2., R2, 0), hubP4).toShape()
-		connector21 = Part.LineSegment(shroud2P4, FreeCAD.Vector(obj.L-th-gap,R2+re,0)).toShape()
-		connector22 = Part.LineSegment(FreeCAD.Vector(obj.L-th-gap,R2+re,0), FreeCAD.Vector(obj.L-th-gap+gap,R2+re,0)).toShape()
-		connector23 = Part.LineSegment(FreeCAD.Vector(obj.L-th-gap+gap,R2+re,0), FreeCAD.Vector(obj.L-th-gap+gap+d,R2+re-v,0)).toShape()
-		connector24 = Part.LineSegment(FreeCAD.Vector(obj.L-th-gap+gap+d,R2+re-v,0), FreeCAD.Vector(obj.L-th-gap+gap+d,R2+re-v-relip,0)).toShape()
-		connector25 = Part.LineSegment(FreeCAD.Vector(obj.L-th-gap+gap+d,R2+re-v-0.315,0), shroudP4).toShape()
-		connector10 = Part.LineSegment(shroudP1, shroud2P1).toShape()
+		connector20 = Part.LineSegment(FreeCAD.Vector(obj.L+obj.b2+th+gap,0,0), FreeCAD.Vector(obj.L+obj.b2+th+gap,R2+re,0)).toShape()
+		# connector21 = Part.LineSegment(FreeCAD.Vector(obj.L+obj.b2+th+gap,R2,0), FreeCAD.Vector(obj.L+obj.b2+th+gap,R2+re,0)).toShape()
+		connector22 = Part.LineSegment(FreeCAD.Vector(obj.L+obj.b2+th+gap,R2+re,0), FreeCAD.Vector(obj.L+obj.b2+th+gap-gap,R2+re,0)).toShape()
+		connector23 = Part.LineSegment(FreeCAD.Vector(obj.L+obj.b2+th+gap-gap,R2+re,0), FreeCAD.Vector(obj.L+obj.b2+th+gap-gap-d,R2+re-v,0)).toShape()
+		connector24 = Part.LineSegment(FreeCAD.Vector(obj.L+obj.b2+th+gap-gap-d,R2+re-v,0), FreeCAD.Vector(obj.L+obj.b2+th+gap-gap-d,R2+re-v-relip,0)).toShape()
+		connector25 = Part.LineSegment(FreeCAD.Vector(obj.L+obj.b2+th+gap-gap-d,R2+re-v-relip,0), FreeCAD.Vector(obj.L+obj.b2+th+gap-gap-d+th,R2+re-v-relip,0)).toShape()
+		connector26 = Part.LineSegment(FreeCAD.Vector(obj.L+obj.b2+th+gap-gap-d+th,R2+re-v-relip,0), FreeCAD.Vector(obj.L+obj.b2+th+gap-gap-d+th,0,0)).toShape()
+		connector27 = Part.LineSegment(FreeCAD.Vector(obj.L+obj.b2+th+gap-gap-d+th,0,0), FreeCAD.Vector(obj.L+obj.b2+th+gap,0,0)).toShape()
+
 
 
 		# Creation of the separating meridional plane
@@ -145,7 +148,8 @@ class Meridional:
 #			w = Part.Wire([inlet1,inlet2, shroud1.toShape(), shroud2.toShape(), outlet1, outlet2, hub1.toShape(), hub2.toShape(), Le1Curve.toShape(), Le2Curve.toShape()], closed = False)
 
 		# w = Part.Wire([shroud.toShape(), connector10, shroud2.toShape(), connector21, connector22], closed = False)
-		w = Part.Wire([connector10, shroud2.toShape(), connector21 , connector22, connector23, connector24, connector25, shroud.toShape(),], closed = False)
+		# w = Part.Wire([connector20, connector21 , connector22c], closed = False)
+		w = Part.Wire([connector20, connector22 , connector23, connector24, connector25, connector26, connector27], closed = False)
 		
 
 #		shroudSurface = shroud.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
