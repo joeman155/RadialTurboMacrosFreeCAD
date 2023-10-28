@@ -1,4 +1,4 @@
-# Script creates a 3D blade with thickness
+ # Script creates a 3D blade with thickness
 Mer = App.ActiveDocument.getObject("Meridional")
 
 # Creation of parameters for change geometry
@@ -313,9 +313,9 @@ class Blades:
 			BladeSurfaceModel = Part.makeLoft([ShroudProfile2,AveProfile, HubProfile2])
 		else:
 			#BladeSurfaceModel = Part.makeLoft([ShroudProfile2, ShroudProfile, HubProfile, HubProfile2])
-			BladeSurfaceModel = Part.makeLoft([ShroudProfile2, HubProfile2])
+			BladeSurfaceModel = Part.makeLoft([ShroudProfile2, HubProfile2], True)
 
-		if obj.TraillingEdgeEllipse == False:
+		if obj.TraillingEdgeEllipse == False and 1 == 1:
 
 			ListEdges1 = [BladeSurfaceModel.Edges[0], BladeSurfaceModel.Edges[4], BladeSurfaceModel.Edges[7], BladeSurfaceModel.Edges[10]]
 			Surface1 = Part.makeFilledFace(ListEdges1)
@@ -330,49 +330,82 @@ class Blades:
 			BladeSolidInit = Part.makeSolid(BladeShell)
 
 		# Cut of the TE 
-
-		LineShroudBlock = Part.LineSegment(FreeCAD.Vector(Mer.L/2, R2), FreeCAD.Vector(Mer.L/2, R2*2.2))
-		LineHubBlock = Part.LineSegment(FreeCAD.Vector((Mer.L+Mer.b2)*2, R2), FreeCAD.Vector((Mer.L+Mer.b2)*2, R2*2.2))
-		LineTopBlock = Part.LineSegment(FreeCAD.Vector(Mer.L/2, R2*1.2), FreeCAD.Vector((Mer.L+Mer.b2)*2, R2*2.2))
-		LineDownBlock = Part.LineSegment(FreeCAD.Vector(Mer.L/2, R2), FreeCAD.Vector((Mer.L+Mer.b2)*2, R2))
-
-		FaceShroudBlock = LineShroudBlock.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
-		FaceHubBlock = LineHubBlock.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
-		FaceTopBlock = LineTopBlock.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
-		FaceDownBlock = LineDownBlock.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
-
-		BlockShell = Part.makeShell([FaceShroudBlock, FaceHubBlock, FaceTopBlock, FaceDownBlock])
-		BlockSolid = Part.makeSolid(BlockShell)
-
-		BladeSolidSecond = BladeSolidInit.cut(BlockSolid)
+		# Comment this out as the fillets don't work properly. We can cut the TE manually later on.
+		# LineShroudBlock = Part.LineSegment(FreeCAD.Vector(Mer.L/2, R2), FreeCAD.Vector(Mer.L/2, R2*1.2))
+		# LineHubBlock = Part.LineSegment(FreeCAD.Vector((Mer.L+Mer.b2)*2, R2), FreeCAD.Vector((Mer.L+Mer.b2)*2, R2*2.2))
+		# LineTopBlock = Part.LineSegment(FreeCAD.Vector(Mer.L/2, R2*1.2), FreeCAD.Vector((Mer.L+Mer.b2)*2, R2*2.2))
+		# LineDownBlock = Part.LineSegment(FreeCAD.Vector(Mer.L/2, R2), FreeCAD.Vector((Mer.L+Mer.b2)*2, R2))
+		# FaceShroudBlock = LineShroudBlock.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
 
 
-		if obj.FullDomainCFD == False and obj.PeriodicDomainCFD == False:
+		# FaceHubBlock = LineHubBlock.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
+		# FaceTopBlock = LineTopBlock.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
+		# FaceDownBlock = LineDownBlock.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
+		# BlockShell = Part.makeShell([FaceShroudBlock, FaceHubBlock, FaceTopBlock, FaceDownBlock])
+		# BlockSolid = Part.makeSolid(BlockShell)
+		# BladeSolidSecond = BladeSolidInit.cut(BlockSolid)
+
+
+		# This is just for debugging.
+		# BladesList = []
+		# BladesList.append(ShroudProfile2)
+		# BladesList.append(HubProfile2)
+		# BladesList.append(faceShroud2)
+		# BladesList.append(faceHub2)
+		# BladesList.append(BladeSurfaceModel)
+		# BladesList.append(Surface1)
+		# BladesList.append(Surface2)
+		# BladesList.append(ListSurfaces)	
+		# BladesList.append(BladeSolidInit)
+
+		# BladesList.append(FaceTopBlock)
+		# BladesList.append(FaceDownBlock)
+		# BladesList.append(FaceHubBlock)
+		# BladesList.append(BlockSolid)
+
+
+		BladeSolidSecond = BladeSolidInit
+
+
+		if obj.FullDomainCFD == False and obj.PeriodicDomainCFD == False and 1 == 1:
 			#Cut of the Shroud Side of Blade 
 			FaceShroudCut =Mer.Shape.Faces[0]		
 			LineTopShroudCut = Part.LineSegment(FreeCAD.Vector(Mer.L, R2, 0), FreeCAD.Vector(0, R2, 0))
 			FaceTopShroudCut = LineTopShroudCut.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
 			LineInletShroudCut = Part.LineSegment(FreeCAD.Vector(0, R2, 0), FreeCAD.Vector(0, R0, 0))
 			FaceInletShroudCut = LineInletShroudCut.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
+			FaceInletShroudCut.removeSplitter()
 
 			ShroudCutBLockShell = Part.makeShell([FaceShroudCut, FaceTopShroudCut, FaceInletShroudCut])
+			ShroudCutBLockShell.removeSplitter()
 			ShroudCutBLockSolid = Part.makeSolid(ShroudCutBLockShell)
 
-			BladeSolidThree = BladeSolidSecond.cut(ShroudCutBLockSolid)
+			# Rotate block, so we don't get imperfection on blade
+			ShroudCutBLockSolid.Placement = App.Placement(App.Vector(0,0,0), App.Rotation(App.Vector(1,0,0),-90), App.Vector(0,0,0))
 
-			# Cut of the Hub Side Of Blade
+			BladeSolidThree = BladeSolidSecond.cut(ShroudCutBLockSolid)
+			BladeSolidThree.removeSplitter()
+
+			# Cut of the Hub Sisde Of Blade
 			FaceHubCut = Mer.Shape.Faces[1]
 			LineTopHubCut = Part.LineSegment(FreeCAD.Vector(Mer.L+Mer.b2, R2, 0), FreeCAD.Vector(Mer.L+Mer.b2*2, R2, 0))
 			FaceTopHubCut = LineTopHubCut.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
 			LineSideHubCut = Part.LineSegment(FreeCAD.Vector(Mer.L+Mer.b2*2, R2, 0), FreeCAD.Vector(Mer.L+Mer.b2*2, 0, 0))
 			FaceSideHubCut = LineSideHubCut.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
+			FaceSideHubCut.removeSplitter()
 			LineSide2HubCut = Part.LineSegment(FreeCAD.Vector(0, r0, 0), FreeCAD.Vector(0, 0, 0))
 			FaceSide2HubCut = LineSide2HubCut.toShape().revolve(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0), 360)
+			FaceSide2HubCut.removeSplitter
 
 			HubCutBLockShell = Part.makeShell([FaceHubCut, FaceTopHubCut, FaceSideHubCut, FaceSide2HubCut])
+			HubCutBLockShell.removeSplitter()
 			HubCutBLockSolid = Part.makeSolid(HubCutBLockShell)	
 
+			# Rotate block, so we don't get imperfection on blade
+			HubCutBLockSolid.Placement = App.Placement(App.Vector(0,0,0), App.Rotation(App.Vector(1,0,0),-90), App.Vector(0,0,0))
+
 			BladeSolid = BladeSolidThree.cut(HubCutBLockSolid)	
+
 
 
 		# Creation of a massive of blades		
@@ -382,6 +415,7 @@ class Blades:
 				BladeSolidi = BladeSolid.copy()
 				BladeSolidi.rotate(FreeCAD.Vector(0, 0, 0), FreeCAD.Vector(1, 0, 0), AngleRotateBlade*(i))
 				BladesList.append(BladeSolidi)
+
 
 		elif obj.FullDomainCFD==True and obj.PeriodicDomainCFD == False:
 		# Creation of a massive of blades without cut of shroud and hub parts
